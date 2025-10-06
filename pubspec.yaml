@@ -1,0 +1,51 @@
+# pubspec.yaml
+name: news_editorial_app
+description: Hệ thống Tòa soạn Điện tử - VnExpress Style
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=2.19.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # HTTP requests
+  http: ^0.13.5
+  
+  # Date formatting
+  intl: ^0.18.1
+  
+  # URL launcher
+  url_launcher: ^6.1.12
+  
+  # State management
+  provider: ^6.0.5
+  
+  # Local storage
+  shared_preferences: ^2.2.2
+  
+  # Loading indicator
+  flutter_spinkit: ^5.2.0
+  
+  # Image caching
+  cached_network_image: ^3.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Assets (uncomment when you have assets)
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
+
+  # Fonts (removed - using system default fonts)
+  # Will use Material Design default fonts instead
