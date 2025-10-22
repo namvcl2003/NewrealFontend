@@ -400,4 +400,95 @@ class ArticleProvider with ChangeNotifier {
   void dispose() {
     super.dispose();
   }
+
+
+
+
+
+
+
+
+  // Add these methods to your ArticleProvider class (lib/providers/article_provider.dart)
+
+// Get related articles by category (exclude current article)
+  List<Article> getRelatedArticles(Article currentArticle, {int limit = 5}) {
+    // Filter articles with same category, excluding current article
+    final relatedArticles = _articles.where((article) {
+      // Exclude current article
+      if (article.id == currentArticle.id) return false;
+
+      // Match category
+      final currentCategory = _mapCategoryToVietnamese(currentArticle.category);
+      final articleCategory = _mapCategoryToVietnamese(article.category);
+
+      return currentCategory == articleCategory;
+    }).toList();
+
+    // Sort by publish date (newest first)
+    relatedArticles.sort((a, b) {
+      try {
+        final dateA = DateTime.parse(a.publishDate.replaceAll(' ', 'T') + ':00');
+        final dateB = DateTime.parse(b.publishDate.replaceAll(' ', 'T') + ':00');
+        return dateB.compareTo(dateA);
+      } catch (e) {
+        return 0;
+      }
+    });
+
+    // Return limited number of articles
+    return relatedArticles.take(limit).toList();
+  }
+
+
+// Get related articles by tags (SMART MATCHING)
+  List<Article> getRelatedArticlesByTags(Article currentArticle, {int limit = 5}) {
+    if (currentArticle.tags.isEmpty) {
+      return getRelatedArticles(currentArticle, limit: limit);
+    }
+
+    // Calculate relevance score for each article
+    final scoredArticles = <Map<String, dynamic>>[];
+
+    for (final article in _articles) {
+      // Skip current article
+      if (article.id == currentArticle.id) continue;
+
+      int score = 0;
+
+      // Score based on matching tags
+      for (final tag in currentArticle.tags) {
+        if (article.tags.contains(tag)) {
+          score += 3; // High weight for matching tags
+        }
+      }
+
+      // Score based on same category
+      final currentCategory = _mapCategoryToVietnamese(currentArticle.category);
+      final articleCategory = _mapCategoryToVietnamese(article.category);
+      if (currentCategory == articleCategory) {
+        score += 2;
+      }
+
+      // Score based on same source
+      if (article.source == currentArticle.source) {
+        score += 1;
+      }
+
+      if (score > 0) {
+        scoredArticles.add({
+          'article': article,
+          'score': score,
+        });
+      }
+    }
+
+    // Sort by score descending
+    scoredArticles.sort((a, b) => (b['score'] as int).compareTo(a['score'] as int));
+
+    // Return top articles
+    return scoredArticles
+        .take(limit)
+        .map((item) => item['article'] as Article)
+        .toList();
+  }
 }

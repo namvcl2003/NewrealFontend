@@ -9,6 +9,7 @@ import '../utils/constants.dart';
 import '../utils/date_utils.dart';
 import 'article_detail_screen.dart';
 import 'search_screen.dart';
+import 'settings_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -43,6 +44,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+
+
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -53,22 +57,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
-      body: Consumer<ArticleProvider>(
-        builder: (context, provider, child) {
-          return RefreshIndicator(
-            key: _refreshIndicatorKey,
-            onRefresh: () => provider.refreshData(),
-            child: CustomScrollView(
-              controller: _scrollController,
-              slivers: [
-                _buildAppBar(context),
-                _buildStatsSection(provider),
-                _buildFiltersSection(provider),
-                _buildContentSection(provider),
-              ],
-            ),
-          );
-        },
+      body: SafeArea( // Thêm SafeArea bọc toàn bộ body
+        child: Consumer<ArticleProvider>(
+          builder: (context, provider, child) {
+            return RefreshIndicator(
+              key: _refreshIndicatorKey,
+              onRefresh: () => provider.refreshData(),
+              child: CustomScrollView(
+                controller: _scrollController,
+                slivers: [
+                  _buildAppBar(context),
+                  // _buildStatsSection(provider), // Đã comment
+                  _buildFiltersSection(provider),
+                  _buildContentSection(provider),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -79,7 +85,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       backgroundColor: Colors.white,
       elevation: 2,
       pinned: true,
-      expandedHeight: 120,
+      expandedHeight: 122,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
           color: Colors.white,
@@ -88,14 +94,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Top bar with logo and weather
               Container(
                 height: 60,
-                padding: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.defaultPadding,
+                ),
+                alignment: Alignment.center, // Thêm alignment
                 child: Row(
                   children: [
                     _buildVnExpressLogo(),
                     const SizedBox(width: 16),
-                    Text(
-                      AppStrings.appSubtitle,
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                    Flexible( // Thay Text bằng Flexible để tránh overflow
+                      child: Text(
+                        AppStrings.appSubtitle,
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                     const Spacer(),
                     _buildWeatherInfo(),
@@ -107,14 +119,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
               // Search and actions
               Container(
                 height: 60,
-                padding: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.defaultPadding,
+                ),
+                alignment: Alignment.center, // Thêm alignment
                 child: Row(
                   children: [
                     Expanded(
                       child: GestureDetector(
                         onTap: () => _navigateToSearch(context),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.grey[100],
                             borderRadius: BorderRadius.circular(20),
@@ -124,9 +142,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             children: [
                               Icon(Icons.search, size: 20, color: Colors.grey[600]),
                               const SizedBox(width: 8),
-                              Text(
-                                AppStrings.searchPlaceholder,
-                                style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                              Flexible( // Thêm Flexible
+                                child: Text(
+                                  AppStrings.searchPlaceholder,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontSize: 14,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
                             ],
                           ),
@@ -190,9 +214,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Icons.location_on, size: 14, color: Colors.grey[600]),
-        Text('Hà Nội ', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        Text(
+          'Hà Nội ',
+          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          overflow: TextOverflow.ellipsis,
+        ),
         const Icon(Icons.wb_sunny, size: 14, color: Colors.orange),
-        Text(' 28°', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        Text(
+          ' 28°',
+          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          overflow: TextOverflow.ellipsis,
+        ),
       ],
     );
   }
@@ -668,9 +700,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
         const Spacer(),
         if (article.author.isNotEmpty)
-          Text(
-            article.author,
-            style: TextStyle(fontSize: 11, color: AppTheme.primaryRed),
+          Flexible(
+            child: Text(
+              article.author,
+              style: TextStyle(fontSize: 11, color: AppTheme.primaryRed),
+              overflow: TextOverflow.ellipsis, // Thêm dòng này
+              maxLines: 1, // Giới hạn 1 dòng
+            ),
           ),
       ],
     );
@@ -705,11 +741,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // void _showSettings(BuildContext context) {
+  //   ScaffoldMessenger.of(context).showSnackBar(
+  //     const SnackBar(content: Text('Tính năng cài đặt đang phát triển')),
+  //   );
+  // }
   void _showSettings(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Tính năng cài đặt đang phát triển')),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const SettingsScreen(),
+      ),
     );
   }
+
 }
 
 // Loading Widget

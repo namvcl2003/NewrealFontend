@@ -34,6 +34,13 @@ dependencies:
   # Image caching
   cached_network_image: ^3.3.0
 
+  # Settings & Storage - NEW!
+
+  package_info_plus: ^5.0.1
+
+    # File System (for cache management)
+  path_provider: ^2.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

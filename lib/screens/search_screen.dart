@@ -499,16 +499,38 @@ class _SearchScreenState extends State<SearchScreen> {
                     // Metadata
                     Row(
                       children: [
-                        Text(
-                          AppDateUtils.formatRelativeDate(article.publishDate),
-                          style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                        Flexible( // Thêm Flexible cho phần ngày
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.schedule, size: 12, color: Colors.grey[500]),
+                              const SizedBox(width: 2),
+                              Flexible(
+                                child: Text(
+                                  AppDateUtils.formatRelativeDate(article.publishDate),
+                                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        Icon(Icons.visibility, size: 12, color: Colors.grey[500]),
-                        const SizedBox(width: 2),
-                        Text(
-                          article.viewCount,
-                          style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                        Flexible( // Thêm Flexible cho phần view count
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.visibility, size: 12, color: Colors.grey[500]),
+                              const SizedBox(width: 2),
+                              Flexible(
+                                child: Text(
+                                  article.viewCount,
+                                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
