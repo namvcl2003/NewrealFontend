@@ -313,6 +313,7 @@ class AppConstants {
 
   /// Maximum concurrent image loads
   static const int maxConcurrentImageLoads = 10;
+
 }
 
 /// App-wide string constants for localization

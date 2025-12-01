@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import '../models/article.dart';
+import 'auth_service.dart';
 
 /// Main API service for news editorial app
 class ApiService {
@@ -27,6 +28,19 @@ class ApiService {
     'Accept': 'application/json',
     'User-Agent': 'NewsEditorial/1.0',
   };
+
+  /// Get headers with authentication token if available
+  static Future<Map<String, String>> _getHeadersWithAuth() async {
+    final headers = Map<String, String>.from(_headers);
+
+    // Get auth token from AuthService
+    final authService = AuthService();
+    if (authService.token != null) {
+      headers['Authorization'] = 'Bearer ${authService.token}';
+    }
+
+    return headers;
+  }
 
   // ========== ERROR HANDLING ==========
 

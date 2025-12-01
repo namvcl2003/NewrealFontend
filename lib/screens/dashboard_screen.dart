@@ -29,12 +29,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _setupScrollController() {
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - AppConstants.loadMoreThreshold) {
-        _loadMoreArticles();
-      }
-    });
+    // Tắt auto-load khi scroll - user phải nhấn nút "Xem thêm"
+    // Uncomment dòng dưới để bật lại infinite scroll:
+
+    // _scrollController.addListener(() {
+    //   if (_scrollController.position.pixels >=
+    //       _scrollController.position.maxScrollExtent - AppConstants.loadMoreThreshold) {
+    //     _loadMoreArticles();
+    //   }
+    // });
   }
 
   void _loadMoreArticles() {
@@ -56,7 +59,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea( // Thêm SafeArea bọc toàn bộ body
         child: Consumer<ArticleProvider>(
           builder: (context, provider, child) {
@@ -82,13 +85,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
   /// Build VnExpress style app bar
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
       elevation: 2,
       pinned: true,
       expandedHeight: 122,
       flexibleSpace: FlexibleSpaceBar(
         background: Container(
-          color: Colors.white,
+          color: Theme.of(context).appBarTheme.backgroundColor,
           child: Column(
             children: [
               // Top bar with logo and weather
@@ -105,7 +108,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Flexible( // Thay Text bằng Flexible để tránh overflow
                       child: Text(
                         AppStrings.appSubtitle,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.6),
+                        ),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -134,19 +140,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             vertical: 8,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.grey[100],
+                            color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                            ),
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.search, size: 20, color: Colors.grey[600]),
+                              Icon(
+                                Icons.search,
+                                size: 20,
+                                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
+                              ),
                               const SizedBox(width: 8),
                               Flexible( // Thêm Flexible
                                 child: Text(
                                   AppStrings.searchPlaceholder,
                                   style: TextStyle(
-                                    color: Colors.grey[600],
+                                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
                                     fontSize: 14,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -159,14 +171,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                     const SizedBox(width: 12),
                     IconButton(
+                      onPressed: () => _navigateToPersonalizedFeed(context),
+                      icon: const Icon(Icons.person_pin),
+                      color: Theme.of(context).iconTheme.color,
+                      tooltip: 'Dành cho bạn',
+                    ),
+                    IconButton(
                       onPressed: () => _showNotifications(context),
                       icon: const Icon(Icons.notifications_outlined),
-                      color: Colors.grey[600],
+                      color: Theme.of(context).iconTheme.color,
                     ),
                     IconButton(
                       onPressed: () => _showSettings(context),
                       icon: const Icon(Icons.settings_outlined),
-                      color: Colors.grey[600],
+                      color: Theme.of(context).iconTheme.color,
                     ),
                   ],
                 ),
@@ -196,7 +214,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Container(
             width: 2,
             height: 16,
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             margin: const EdgeInsets.symmetric(horizontal: 2),
           ),
           const Text(
@@ -213,16 +231,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.location_on, size: 14, color: Colors.grey[600]),
+        Icon(Icons.location_on, size: 14, color: Theme.of(context).textTheme.bodySmall?.color),
         Text(
           'Hà Nội ',
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color),
           overflow: TextOverflow.ellipsis,
         ),
         const Icon(Icons.wb_sunny, size: 14, color: Colors.orange),
         Text(
           ' 28°',
-          style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+          style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color),
           overflow: TextOverflow.ellipsis,
         ),
       ],
@@ -263,7 +281,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             const SizedBox(height: 6),
             Text(
               title,
-              style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color),
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -286,7 +304,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildFiltersSection(ArticleProvider provider) {
     return SliverToBoxAdapter(
       child: Container(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         child: Column(
           children: [
             // Category tabs
@@ -310,7 +328,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           Text(
                             category,
                             style: TextStyle(
-                              color: isSelected ? AppTheme.primaryRed : Colors.black54,
+                              color: isSelected ? AppTheme.primaryRed : Theme.of(context).textTheme.bodyMedium?.color,
                               fontSize: 14,
                               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                             ),
@@ -335,7 +353,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               padding: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
               child: Row(
                 children: [
-                  Text('Nguồn: ', style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+                  Text('Nguồn: ', style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color)),
                   ...(provider.sources.map((source) {
                     final isSelected = source == provider.selectedSource;
                     return GestureDetector(
@@ -364,7 +382,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const Spacer(),
                   Text(
                     '${provider.filteredArticles.length} bài viết',
-                    style: TextStyle(fontSize: 11, color: Colors.grey[500]),
+                    style: TextStyle(fontSize: 11, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
                   ),
                 ],
               ),
@@ -402,27 +420,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // Featured article
             return _buildFeaturedArticle(provider.filteredArticles[0]);
           } else if (index == 1) {
-            // Latest news header
+            // Latest news header with pagination info
             return Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AppConstants.defaultPadding,
                 vertical: AppConstants.smallPadding,
               ),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Text(
+                        AppStrings.latestNews,
+                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: AppTheme.primaryRed,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (provider.isRefreshing)
+                        const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  // Pagination info
                   Text(
-                    AppStrings.latestNews,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: AppTheme.primaryRed,
+                    'Hiển thị ${provider.filteredArticles.length} bài viết',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).iconTheme.color,
                     ),
                   ),
-                  const Spacer(),
-                  if (provider.isRefreshing)
-                    const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
                 ],
               ),
             );
@@ -431,17 +462,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
             if (articleIndex < provider.filteredArticles.length) {
               return _buildRegularArticle(provider.filteredArticles[articleIndex]);
             } else if (provider.hasMore) {
-              return Container(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            } else {
+              // Load More Button
               return Container(
                 padding: const EdgeInsets.all(AppConstants.defaultPadding),
                 child: Center(
-                  child: Text(
-                    'Đã hiển thị tất cả bài viết',
-                    style: Theme.of(context).textTheme.bodySmall,
+                  child: provider.isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton.icon(
+                          onPressed: () => _loadMoreArticles(),
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('Xem thêm bài viết'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 16,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                          ),
+                        ),
+                ),
+              );
+            } else {
+              // End of list
+              return Container(
+                padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 48,
+                        color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Đã hiển thị tất cả bài viết',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).iconTheme.color,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -458,11 +520,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       margin: const EdgeInsets.all(AppConstants.defaultPadding),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Theme.of(context).dividerColor.withOpacity(0.3),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -563,7 +625,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
       ),
       child: InkWell(
@@ -631,10 +693,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Title
                     Text(
                       article.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.titleMedium?.color,
                         height: 1.2,
                       ),
                       maxLines: 2,
@@ -645,8 +707,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // Summary
                     Text(
                       article.summary,
-                      style: const TextStyle(
-                        color: Colors.black54,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.8),
                         fontSize: 12,
                         height: 1.3,
                       ),
@@ -660,14 +722,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       children: [
                         Text(
                           AppDateUtils.formatRelativeDate(article.publishDate),
-                          style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                          style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
                         ),
                         const SizedBox(width: 12),
-                        Icon(Icons.visibility, size: 12, color: Colors.grey[500]),
+                        Icon(Icons.visibility, size: 12, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
                         const SizedBox(width: 2),
                         Text(
                           article.viewCount,
-                          style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                          style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
                         ),
                       ],
                     ),
@@ -685,14 +747,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildArticleMetadata(Article article) {
     return Row(
       children: [
-        Icon(Icons.schedule, size: 14, color: Colors.grey[500]),
+        Icon(Icons.schedule, size: 14, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
         const SizedBox(width: 4),
         Text(
           AppDateUtils.formatRelativeDate(article.publishDate),
           style: Theme.of(context).textTheme.bodySmall,
         ),
         const SizedBox(width: 16),
-        Icon(Icons.visibility, size: 14, color: Colors.grey[500]),
+        Icon(Icons.visibility, size: 14, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
         const SizedBox(width: 4),
         Text(
           '${article.viewCount} ${AppStrings.viewCount}',
@@ -718,14 +780,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       height: size,
       width: isSmall ? AppConstants.thumbnailImageWidth : double.infinity,
-      color: Colors.grey[300],
-      child: Icon(Icons.image, size: isSmall ? 32 : 64, color: Colors.grey[500]),
+      color: Theme.of(context).dividerColor,
+      child: Icon(Icons.image, size: isSmall ? 32 : 64, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
     );
   }
 
   // Navigation methods
   void _navigateToSearch(BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
+  }
+
+  void _navigateToPersonalizedFeed(BuildContext context) {
+    Navigator.pushNamed(context, '/personalized-feed');
   }
 
   void _navigateToArticleDetail(BuildContext context, Article article) {
@@ -821,16 +887,16 @@ class _EmptyStateWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.newspaper, size: 64, color: Colors.grey[400]),
+            Icon(Icons.newspaper, size: 64, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5)),
             const SizedBox(height: 16),
             Text(
               'Không tìm thấy bài viết',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey[600]),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Theme.of(context).textTheme.bodySmall?.color),
             ),
             const SizedBox(height: 8),
             Text(
               'Thử thay đổi bộ lọc hoặc làm mới dữ liệu',
-              style: TextStyle(color: Colors.grey[500]),
+              style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
               textAlign: TextAlign.center,
             ),
           ],

@@ -3,11 +3,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/article_provider.dart';
+import '../providers/auth_provider.dart';
+import '../providers/theme_provider.dart';
+import '../providers/settings_provider.dart';
 import '../utils/app_theme.dart';
 import '../utils/constants.dart';
 import '../services/api_service.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'login_screen.dart';
+import 'profile_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -177,67 +182,118 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildProfileSection() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppTheme.primaryRed, AppTheme.primaryRed.withOpacity(0.8)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryRed.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 32,
-            backgroundColor: Colors.white,
-            child: Icon(
-              Icons.person,
-              size: 32,
-              color: AppTheme.primaryRed,
+    return Consumer<AuthProvider>(
+      builder: (context, authProvider, child) {
+        final isAuthenticated = authProvider.isAuthenticated;
+        final user = authProvider.currentUser;
+
+        return InkWell(
+          onTap: () {
+            if (isAuthenticated) {
+              // Navigate to profile screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfileScreen()),
+              );
+            } else {
+              // Navigate to login screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()),
+              );
+            }
+          },
+          child: Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppTheme.primaryRed, AppTheme.primaryRed.withOpacity(0.8)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primaryRed.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                const Text(
-                  'Người dùng',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                // Avatar
+                CircleAvatar(
+                  radius: 32,
+                  backgroundColor: Colors.white,
+                  backgroundImage: isAuthenticated && user?.avatar != null
+                      ? NetworkImage(user!.avatar!)
+                      : null,
+                  child: isAuthenticated && user?.avatar != null
+                      ? null
+                      : Icon(
+                          isAuthenticated ? Icons.person : Icons.person_outline,
+                          size: 32,
+                          color: AppTheme.primaryRed,
+                        ),
+                ),
+                const SizedBox(width: 16),
+                // User info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isAuthenticated ? user!.name : 'Khách',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        isAuthenticated ? user!.email : 'Nhấn để đăng nhập',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 14,
+                        ),
+                      ),
+                      if (isAuthenticated && user!.stats.articlesRead > 0) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.article_outlined,
+                              size: 14,
+                              color: Colors.white.withOpacity(0.8),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${user.stats.articlesRead} bài đã đọc',
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.8),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'guest@vnnews.com',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 14,
-                  ),
+                // Action icon
+                Icon(
+                  isAuthenticated ? Icons.arrow_forward_ios : Icons.login,
+                  color: Colors.white,
+                  size: 20,
                 ),
               ],
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
-            onPressed: () {
-              _showSnackBar('Tính năng đang phát triển');
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -294,30 +350,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildDisplaySettings() {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+
     return Container(
-      color: Colors.white,
+      color: Theme.of(context).cardColor,
       child: Column(
         children: [
           SwitchListTile(
             title: const Text('Chế độ tối'),
-            subtitle: const Text('Giao diện tối dịu mắt'),
-            value: _darkMode,
-            onChanged: (value) {
-              setState(() {
-                _darkMode = value;
-              });
-              _saveSettings();
-              _showSnackBar('Chế độ tối sẽ được áp dụng trong bản cập nhật tiếp theo');
+            subtitle: Text(
+              themeProvider.isDarkMode ? 'Bật (Bảo vệ mắt ban đêm)' : 'Tắt',
+            ),
+            value: themeProvider.isDarkMode,
+            onChanged: (_) {
+              themeProvider.toggleTheme();
+              _showSnackBar('Đã ${themeProvider.isDarkMode ? "bật" : "tắt"} chế độ tối');
             },
-            secondary: const Icon(Icons.dark_mode),
+            secondary: Icon(
+              themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+            ),
           ),
           const Divider(height: 1),
           ListTile(
             title: const Text('Cỡ chữ'),
-            subtitle: Text(_getTextSizeLabel()),
+            subtitle: Text('${settingsProvider.fontSize.label} (${(settingsProvider.fontScale * 100).toInt()}%)'),
             leading: const Icon(Icons.format_size),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: _showTextSizeDialog,
+            onTap: () => _showFontSizeDialog(settingsProvider),
           ),
           const Divider(height: 1),
           ListTile(
@@ -380,6 +440,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               _showSnackBar('Tính năng đang phát triển');
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            title: const Text('Bài viết đã lưu'),
+            subtitle: const Text('Xem các bài viết yêu thích đã lưu'),
+            leading: const Icon(Icons.bookmark),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.pushNamed(context, '/bookmarks');
+            },
+          ),
+          const Divider(height: 1),
+          ListTile(
+            title: const Text('Lịch sử đọc'),
+            subtitle: const Text('Xem lịch sử các bài viết đã đọc'),
+            leading: const Icon(Icons.history),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.pushNamed(context, '/reading-history');
             },
           ),
         ],
@@ -623,49 +703,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   // ==================== DIALOG METHODS ====================
 
-  void _showTextSizeDialog() {
+  void _showFontSizeDialog(SettingsProvider settingsProvider) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Cỡ chữ'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RadioListTile<String>(
-              title: const Text('Nhỏ'),
-              value: 'small',
-              groupValue: _textSize,
-              onChanged: (value) {
-                setState(() {
-                  _textSize = value!;
-                });
-                _saveSettings();
-                Navigator.pop(context);
-              },
+            ...FontSize.values.map((size) {
+              return RadioListTile<FontSize>(
+                title: Text(size.label),
+                subtitle: Text('${(size.scale * 100).toInt()}%', style: TextStyle(fontSize: 12)),
+                value: size,
+                groupValue: settingsProvider.fontSize,
+                onChanged: (value) {
+                  if (value != null) {
+                    settingsProvider.setFontSize(value);
+                    Navigator.pop(dialogContext);
+                    _showSnackBar('Đã đổi cỡ chữ sang ${value.label}');
+                  }
+                },
+              );
+            }),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Xem trước:',
+                style: TextStyle(
+                  fontSize: 12 * settingsProvider.fontScale,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-            RadioListTile<String>(
-              title: const Text('Trung bình'),
-              value: 'medium',
-              groupValue: _textSize,
-              onChanged: (value) {
-                setState(() {
-                  _textSize = value!;
-                });
-                _saveSettings();
-                Navigator.pop(context);
-              },
-            ),
-            RadioListTile<String>(
-              title: const Text('Lớn'),
-              value: 'large',
-              groupValue: _textSize,
-              onChanged: (value) {
-                setState(() {
-                  _textSize = value!;
-                });
-                _saveSettings();
-                Navigator.pop(context);
-              },
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Đây là đoạn văn bản mẫu',
+                style: TextStyle(fontSize: 14 * settingsProvider.fontScale),
+              ),
             ),
           ],
         ),

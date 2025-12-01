@@ -47,7 +47,7 @@
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(
-//       backgroundColor: Colors.white,
+//       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 //       body: CustomScrollView(
 //         controller: _scrollController,
 //         slivers: [
@@ -61,11 +61,11 @@
 //   /// Build app bar with dynamic title
 //   Widget _buildAppBar(BuildContext context) {
 //     return SliverAppBar(
-//       backgroundColor: Colors.white,
+//       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 //       elevation: _isScrolled ? 2 : 0,
 //       pinned: true,
 //       leading: IconButton(
-//         icon: const Icon(Icons.arrow_back, color: Colors.black54),
+//         icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
 //         onPressed: () => Navigator.pop(context),
 //       ),
 //       title: AnimatedOpacity(
@@ -73,8 +73,8 @@
 //         duration: AppConstants.shortAnimation,
 //         child: Text(
 //           widget.article.title,
-//           style: const TextStyle(
-//             color: Colors.black87,
+//           style: TextStyle(
+//             color: Theme.of(context).textTheme.bodyLarge?.color,
 //             fontSize: 16,
 //             fontWeight: FontWeight.w600,
 //           ),
@@ -84,15 +84,15 @@
 //       ),
 //       actions: [
 //         IconButton(
-//           icon: const Icon(Icons.share, color: Colors.black54),
+//           icon: Icon(Icons.share, color: Theme.of(context).iconTheme.color),
 //           onPressed: () => _shareArticle(context),
 //         ),
 //         IconButton(
-//           icon: const Icon(Icons.bookmark_border, color: Colors.black54),
+//           icon: Icon(Icons.bookmark_border, color: Theme.of(context).iconTheme.color),
 //           onPressed: () => _bookmarkArticle(context),
 //         ),
 //         PopupMenuButton<String>(
-//           icon: const Icon(Icons.more_vert, color: Colors.black54),
+//           icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color),
 //           onSelected: (value) => _handleMenuAction(context, value),
 //           itemBuilder: (context) => [
 //             const PopupMenuItem(value: 'open_original', child: Text('Mở bài gốc')),
@@ -150,8 +150,8 @@
 //                 ),
 //                 child: Text(
 //                   widget.article.category,
-//                   style: const TextStyle(
-//                     color: Colors.white,
+//                   style: TextStyle(
+//                     color: Theme.of(context).cardColor,
 //                     fontSize: 12,
 //                     fontWeight: FontWeight.w500,
 //                   ),
@@ -166,8 +166,8 @@
 //                 ),
 //                 child: Text(
 //                   widget.article.sourceDisplayName,
-//                   style: const TextStyle(
-//                     color: Colors.white,
+//                   style: TextStyle(
+//                     color: Theme.of(context).cardColor,
 //                     fontSize: 10,
 //                     fontWeight: FontWeight.bold,
 //                   ),
@@ -184,7 +184,7 @@
 //                   child: const Text(
 //                     'HOT',
 //                     style: TextStyle(
-//                       color: Colors.white,
+//                       color: Theme.of(context).cardColor,
 //                       fontSize: 9,
 //                       fontWeight: FontWeight.bold,
 //                     ),
@@ -280,9 +280,9 @@
 //             ),
 //             child: Text(
 //               widget.article.summary,
-//               style: const TextStyle(
+//               style: TextStyle(
 //                 fontSize: 16,
-//                 color: Colors.black87,
+//                 color: Theme.of(context).textTheme.bodyLarge?.color,
 //                 height: 1.5,
 //                 fontWeight: FontWeight.w500,
 //               ),
@@ -308,7 +308,7 @@
 //             if (loadingProgress == null) return child;
 //             return Container(
 //               height: 250,
-//               color: Colors.grey[300],
+//               color: Theme.of(context).dividerColor,
 //               child: Center(
 //                 child: CircularProgressIndicator(
 //                   value: loadingProgress.expectedTotalBytes != null
@@ -321,7 +321,7 @@
 //           errorBuilder: (context, error, stackTrace) {
 //             return Container(
 //               height: 250,
-//               color: Colors.grey[300],
+//               color: Theme.of(context).dividerColor,
 //               child: const Center(
 //                 child: Column(
 //                   mainAxisAlignment: MainAxisAlignment.center,
@@ -382,7 +382,7 @@
 //             style: TextStyle(
 //               fontSize: 14,
 //               fontWeight: FontWeight.w600,
-//               color: Colors.grey[700],
+//               color: Theme.of(context).textTheme.bodyMedium?.color,
 //             ),
 //           ),
 //           const SizedBox(height: 8),
@@ -395,9 +395,9 @@
 //                 child: Container(
 //                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
 //                   decoration: BoxDecoration(
-//                     color: Colors.grey[100],
+//                     color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
 //                     borderRadius: BorderRadius.circular(15),
-//                     border: Border.all(color: Colors.grey[300]!),
+//                     border: Border.all(color: Theme.of(context).dividerColor!),
 //                   ),
 //                   child: Row(
 //                     mainAxisSize: MainAxisSize.min,
@@ -406,7 +406,7 @@
 //                       const SizedBox(width: 4),
 //                       Text(
 //                         tag,
-//                         style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+//                         style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color),
 //                       ),
 //                     ],
 //                   ),
@@ -487,9 +487,9 @@
 //       margin: const EdgeInsets.only(top: AppConstants.largePadding),
 //       padding: const EdgeInsets.all(AppConstants.defaultPadding),
 //       decoration: BoxDecoration(
-//         color: Colors.grey[50],
+//         color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
 //         border: Border(
-//           top: BorderSide(color: Colors.grey[300]!, width: 1),
+//           top: BorderSide(color: Theme.of(context).dividerColor!, width: 1),
 //         ),
 //       ),
 //       child: Column(
@@ -509,9 +509,9 @@
 //           Container(
 //             height: 100,
 //             decoration: BoxDecoration(
-//               color: Colors.white,
+//               color: Theme.of(context).cardColor,
 //               borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-//               border: Border.all(color: Colors.grey[300]!),
+//               border: Border.all(color: Theme.of(context).dividerColor!),
 //             ),
 //             child: Center(
 //               child: Column(
@@ -664,6 +664,10 @@ import '../providers/article_provider.dart';
 import '../utils/app_theme.dart';
 import '../utils/constants.dart';
 import '../utils/date_utils.dart';
+import '../utils/bookmark_helper.dart';
+import '../utils/reading_history_helper.dart';
+import '../utils/reaction_helper.dart';
+import '../models/reaction.dart';
 
 class ArticleDetailScreen extends StatefulWidget {
   final Article article;
@@ -680,11 +684,60 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
   List<Article> _relatedArticles = [];
   bool _loadingRelated = true;
 
+  // ✅ Thêm state để lưu article đã được update từ API
+  Article? _updatedArticle;
+  bool _loadingArticle = false;
+
   @override
   void initState() {
     super.initState();
     _setupScrollController();
     _loadRelatedArticles();
+    _fetchArticleDetail(); // ✅ Fetch article từ API để tăng view_count
+
+    // Track reading history and load reactions
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ReadingHistoryHelper.trackArticleView(
+        context,
+        widget.article.id,
+        articleData: {
+          'title': widget.article.title,
+          'summary': widget.article.summary,
+          'imageUrl': widget.article.imageUrl,
+          'category': widget.article.category,
+          'source': widget.article.source,
+          'tags': widget.article.tags,
+          'publishedAt': widget.article.publishDate,
+        },
+      );
+
+      // Load reactions
+      ReactionHelper.loadArticleReactions(context, widget.article.id);
+    });
+  }
+
+  /// ✅ Fetch article detail từ API (sẽ trigger view_count increment ở backend)
+  Future<void> _fetchArticleDetail() async {
+    setState(() {
+      _loadingArticle = true;
+    });
+
+    try {
+      final provider = Provider.of<ArticleProvider>(context, listen: false);
+      final article = await provider.getArticleById(widget.article.id);
+
+      if (article != null && mounted) {
+        setState(() {
+          _updatedArticle = article;
+          _loadingArticle = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching article detail: $e');
+      setState(() {
+        _loadingArticle = false;
+      });
+    }
   }
 
   void _setupScrollController() {
@@ -726,7 +779,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
@@ -740,11 +793,11 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
   /// Build app bar with dynamic title
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: _isScrolled ? 2 : 0,
       pinned: true,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black54),
+        icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
         onPressed: () => Navigator.pop(context),
       ),
       title: AnimatedOpacity(
@@ -752,8 +805,8 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
         duration: AppConstants.shortAnimation,
         child: Text(
           widget.article.title,
-          style: const TextStyle(
-            color: Colors.black87,
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyLarge?.color,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -763,15 +816,17 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.share, color: Colors.black54),
+          icon: Icon(Icons.share, color: Theme.of(context).iconTheme.color),
           onPressed: () => _shareArticle(context),
         ),
-        IconButton(
-          icon: const Icon(Icons.bookmark_border, color: Colors.black54),
-          onPressed: () => _bookmarkArticle(context),
+        BookmarkHelper.buildBookmarkButton(
+          context,
+          widget.article.id,
+          iconSize: 24,
+          inactiveColor: Theme.of(context).iconTheme.color,
         ),
         PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert, color: Colors.black54),
+          icon: Icon(Icons.more_vert, color: Theme.of(context).iconTheme.color),
           onSelected: (value) => _handleMenuAction(context, value),
           itemBuilder: (context) => [
             const PopupMenuItem(value: 'open_original', child: Text('Mở bài gốc')),
@@ -802,6 +857,9 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
         // Action buttons
         _buildActionButtons(),
 
+        // Reactions section
+        _buildReactionsSection(),
+
         // Related articles section - NEW!
         _buildRelatedSection(),
 
@@ -813,6 +871,9 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
 
   /// Build article header with metadata
   Widget _buildArticleHeader() {
+    // ✅ Sử dụng _updatedArticle nếu có, fallback về widget.article
+    final article = _updatedArticle ?? widget.article;
+
     return Container(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       child: Column(
@@ -828,9 +889,9 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  widget.article.category,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  article.category,
+                  style: TextStyle(
+                    color: Theme.of(context).cardColor,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   ),
@@ -840,30 +901,30 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppTheme.getSourceColor(widget.article.source),
+                  color: AppTheme.getSourceColor(article.source),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
-                  widget.article.sourceDisplayName,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  article.sourceDisplayName,
+                  style: TextStyle(
+                    color: Theme.of(context).cardColor,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
               const Spacer(),
-              if (AppDateUtils.shouldShowHotBadge(widget.article.publishDate))
+              if (AppDateUtils.shouldShowHotBadge(article.publishDate))
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Text(
+                  child: Text(
                     'HOT',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Theme.of(context).cardColor,
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
                     ),
@@ -875,7 +936,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
 
           // Title
           Text(
-            widget.article.title,
+            article.title,
             style: Theme.of(context).textTheme.headlineLarge?.copyWith(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -889,7 +950,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
             spacing: 16,
             runSpacing: 8,
             children: [
-              if (widget.article.author.isNotEmpty) ...[
+              if (article.author.isNotEmpty) ...[
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -897,7 +958,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
-                        widget.article.author,
+                        article.author,
                         style: TextStyle(
                           fontSize: 13,
                           color: AppTheme.primaryRed,
@@ -916,7 +977,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                   const SizedBox(width: 4),
                   Text(
                     AppDateUtils.getContextualDateFormat(
-                      widget.article.publishDate,
+                      article.publishDate,
                       context: 'detail',
                     ),
                     style: TextStyle(fontSize: 13, color: Colors.grey[600]),
@@ -929,7 +990,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                   Icon(Icons.visibility, size: 16, color: Colors.grey[600]),
                   const SizedBox(width: 4),
                   Text(
-                    '${widget.article.viewCount} ${AppStrings.viewCount}',
+                    '${article.viewCount} ${AppStrings.viewCount}',
                     style: TextStyle(fontSize: 13, color: Colors.grey[600]),
                   ),
                 ],
@@ -959,9 +1020,9 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
             ),
             child: Text(
               widget.article.summary,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
-                color: Colors.black87,
+                color: Theme.of(context).textTheme.bodyLarge?.color,
                 height: 1.5,
                 fontWeight: FontWeight.w500,
               ),
@@ -987,7 +1048,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
             if (loadingProgress == null) return child;
             return Container(
               height: 250,
-              color: Colors.grey[300],
+              color: Theme.of(context).dividerColor,
               child: Center(
                 child: CircularProgressIndicator(
                   value: loadingProgress.expectedTotalBytes != null
@@ -1000,7 +1061,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
           errorBuilder: (context, error, stackTrace) {
             return Container(
               height: 250,
-              color: Colors.grey[300],
+              color: Theme.of(context).dividerColor,
               child: const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1061,7 +1122,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
+              color: Theme.of(context).textTheme.bodyMedium?.color,
             ),
           ),
           const SizedBox(height: 8),
@@ -1074,9 +1135,9 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.grey[300]!),
+                    border: Border.all(color: Theme.of(context).dividerColor!),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -1085,7 +1146,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                       const SizedBox(width: 4),
                       Text(
                         tag,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                        style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodyMedium?.color),
                       ),
                     ],
                   ),
@@ -1160,15 +1221,93 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
     );
   }
 
+  /// Build reactions section
+  Widget _buildReactionsSection() {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        border: Border(
+          top: BorderSide(color: Theme.of(context).dividerColor!, width: 1),
+          bottom: BorderSide(color: Theme.of(context).dividerColor!, width: 1),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Bạn nghĩ gì về bài viết này?',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // Like button
+              ReactionHelper.buildReactionButton(
+                context: context,
+                articleId: widget.article.id,
+                type: ReactionType.like,
+                icon: Icons.thumb_up,
+                activeColor: Colors.blue,
+                inactiveColor: Colors.grey[600],
+                iconSize: 24,
+                showCount: true,
+              ),
+              // Love button
+              ReactionHelper.buildReactionButton(
+                context: context,
+                articleId: widget.article.id,
+                type: ReactionType.love,
+                icon: Icons.favorite,
+                activeColor: Colors.red,
+                inactiveColor: Colors.grey[600],
+                iconSize: 24,
+                showCount: true,
+              ),
+              // Dislike button
+              ReactionHelper.buildReactionButton(
+                context: context,
+                articleId: widget.article.id,
+                type: ReactionType.dislike,
+                icon: Icons.thumb_down,
+                activeColor: Colors.orange,
+                inactiveColor: Colors.grey[600],
+                iconSize: 24,
+                showCount: true,
+              ),
+              // Share button
+              ReactionHelper.buildReactionButton(
+                context: context,
+                articleId: widget.article.id,
+                type: ReactionType.share,
+                icon: Icons.share,
+                activeColor: Colors.green,
+                inactiveColor: Colors.grey[600],
+                iconSize: 24,
+                showCount: true,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Build related articles section - UPDATED WITH REAL DATA!
   Widget _buildRelatedSection() {
     return Container(
       margin: const EdgeInsets.only(top: AppConstants.largePadding),
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
         border: Border(
-          top: BorderSide(color: Colors.grey[300]!, width: 1),
+          top: BorderSide(color: Theme.of(context).dividerColor!, width: 1),
         ),
       ),
       child: Column(
@@ -1209,9 +1348,9 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
             Container(
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
-                border: Border.all(color: Colors.grey[300]!),
+                border: Border.all(color: Theme.of(context).dividerColor!),
               ),
               child: Center(
                 child: Column(
@@ -1244,7 +1383,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppConstants.defaultRadius),
         border: Border.all(color: Colors.grey[200]!),
       ),
@@ -1277,7 +1416,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     return Container(
                       height: 70,
                       width: 90,
-                      color: Colors.grey[300],
+                      color: Theme.of(context).dividerColor,
                       child: Icon(Icons.image, size: 24, color: Colors.grey[500]),
                     );
                   },
@@ -1285,7 +1424,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     : Container(
                   height: 70,
                   width: 90,
-                  color: Colors.grey[300],
+                  color: Theme.of(context).dividerColor,
                   child: Icon(Icons.image, size: 24, color: Colors.grey[500]),
                 ),
               ),
@@ -1299,10 +1438,10 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                     // Title
                     Text(
                       article.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         height: 1.2,
                       ),
                       maxLines: 2,
@@ -1321,8 +1460,8 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
                           ),
                           child: Text(
                             article.sourceShortName,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: Theme.of(context).cardColor,
                               fontSize: 8,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1382,12 +1521,7 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
   }
 
   void _bookmarkArticle(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Tính năng lưu bài đang được phát triển'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    BookmarkHelper.toggleBookmark(context, widget.article.id);
   }
 
   void _copyLink() {

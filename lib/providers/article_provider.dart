@@ -26,6 +26,12 @@ class ArticleProvider with ChangeNotifier {
   int _totalPages = 1;
   bool _hasMore = true;
 
+  // 🎲 Batch mode for randomized homepage
+  List<Article> _batchCache = []; // Cache 50 bài từ server
+  bool _isBatchMode = false;
+  int _batchCurrentPage = 1;
+  final int _itemsPerPage = 10;
+
   // Getters
   List<Article> get articles => _articles;
   List<Article> get filteredArticles => _filteredArticles;
@@ -73,21 +79,21 @@ class ArticleProvider with ChangeNotifier {
     }
   }
 
-  // Load sample data for demo
+  // Load minimal sample data for demo (giảm từ 5 → 3 bài)
   void _loadSampleData() {
     _articles = [
       Article(
         id: "1",
         url: "https://vnexpress.net/sample1",
         source: "vnexpress",
-        title: "'Hạ tầng số ở xã, phường không hoạt động thì phải khoảnh lại'",
-        summary: "Thủ tướng Phạm Minh Chính yêu cầu rà soát toàn bộ hạ tầng số ở cơ sở, công trình nào đầu tư mà không hoạt động phải 'khoảnh lại', tránh lãng phí.",
-        content: "Chiều 24/9, tại phiên họp Ban Chỉ đạo của Thủ tướng về phát triển Chính phủ số, Thủ tướng Phạm Minh Chính nhấn mạnh cần rà soát toàn bộ hạ tầng số tại các cơ sở. Những công trình đầu tư mà không hoạt động hiệu quả cần được 'khoảnh lại' để tránh lãng phí ngân sách nhà nước.",
+        title: "'Hạ tầng số ở xã, phường không hoạt động thì phải khoánh lại'",
+        summary: "Thủ tướng Phạm Minh Chính yêu cầu rà soát toàn bộ hạ tầng số ở cơ sở, công trình nào đầu tư mà không hoạt động phải 'khoánh lại', tránh lãng phí.",
+        content: "Chiều 24/9, tại phiên họp Ban Chỉ đạo của Thủ tướng về phát triển Chính phủ số, Thủ tướng Phạm Minh Chính nhấn mạnh cần rà soát toàn bộ hạ tầng số tại các cơ sở.",
         author: "Ngọc Thành",
         publishDate: "2025-09-25 16:30",
         category: "Thời sự",
         tags: ["Chính phủ số", "Thủ tướng", "Hạ tầng"],
-        imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
+        imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop",
         viewCount: "12,540",
         crawlTimestamp: "2025-09-25 16:45:00",
       ),
@@ -97,12 +103,12 @@ class ArticleProvider with ChangeNotifier {
         source: "vnexpress",
         title: "Cảnh tan hoang ở thành phố Trung Quốc sau bão Ragasa",
         summary: "Bão Ragasa tràn qua miền đông Trung Quốc, gây thiệt hại nặng nề về người và tài sản.",
-        content: "Bão Ragasa đổ bộ vào tỉnh Giang Tô với sức gió mạnh cấp 12, gây ra những thiệt hại nghiêm trọng. Nhiều tòa nhà bị hư hại, cây xanh đổ rạp khắp nơi. Chính quyền địa phương đã sơ tán hàng ngàn người dân đến nơi an toàn.",
+        content: "Bão Ragasa đổ bộ vào tỉnh Giang Tô với sức gió mạnh cấp 12, gây ra những thiệt hại nghiêm trọng.",
         author: "Hồng Hạnh",
         publishDate: "2025-09-25 15:20",
         category: "Thế giới",
         tags: ["Thiên tai", "Trung Quốc", "Bão"],
-        imageUrl: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=600&h=400&fit=crop",
+        imageUrl: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=400&h=300&fit=crop",
         viewCount: "8,930",
         crawlTimestamp: "2025-09-25 15:30:00",
       ),
@@ -110,46 +116,16 @@ class ArticleProvider with ChangeNotifier {
         id: "3",
         url: "https://dantri.com.vn/sample3",
         source: "dantri",
-        title: "Vì sao báo đón đập vào Biển Đông?",
+        title: "Vì sao bão đổ dồn vào Biển Đông?",
         summary: "Chuyên gia khí tượng giải thích nguyên nhân khiến nhiều cơn bão liên tiếp hướng vào Biển Đông trong thời gian gần đây.",
-        content: "Theo Trung tâm Dự báo Khí tượng Thủy văn Quốc gia, nguyên nhân chính là do sự thay đổi của dòng chảy khí quyển và nhiệt độ nước biển. Hiện tượng La Nina cũng đang tác động mạnh đến hình thái thời tiết khu vực.",
+        content: "Theo Trung tâm Dự báo Khí tượng Thủy văn Quốc gia, nguyên nhân chính là do sự thay đổi của dòng chảy khí quyển và nhiệt độ nước biển.",
         author: "Minh Đức",
         publishDate: "2025-09-25 14:15",
         category: "Khoa học",
         tags: ["Khí tượng", "Biển Đông", "Thiên tai"],
-        imageUrl: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=600&h=400&fit=crop",
+        imageUrl: "https://images.unsplash.com/photo-1504608524841-42fe6f032b4b?w=400&h=300&fit=crop",
         viewCount: "15,670",
         crawlTimestamp: "2025-09-25 14:30:00",
-      ),
-      Article(
-        id: "4",
-        url: "https://vnexpress.net/sample4",
-        source: "vnexpress",
-        title: "Lãn lớn L - N",
-        summary: "Có lẻ trong các nhâm lần về phát âm, l-n là khó sửa nhất và cũng là điều khiến nhiều người lo lắng nhất.",
-        content: "Trong tiếng Việt, âm L và N thường bị nhầm lẫn bởi nhiều người, đặc biệt là trẻ em. Đây là một trong những khó khăn phổ biến trong việc học phát âm tiếng Việt chuẩn. Các chuyên gia ngôn ngữ học khuyên nên luyện tập thường xuyên để cải thiện.",
-        author: "Thu Hằng",
-        publishDate: "2025-09-25 13:45",
-        category: "Giáo dục",
-        tags: ["Tiếng Việt", "Phát âm", "Học tập"],
-        imageUrl: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=600&h=400&fit=crop",
-        viewCount: "6,720",
-        crawlTimestamp: "2025-09-25 14:00:00",
-      ),
-      Article(
-        id: "5",
-        url: "https://vnexpress.net/sample5",
-        source: "vnexpress",
-        title: "Thị trường chứng khoán biến động mạnh cuối phiên",
-        summary: "VN-Index giảm 8,5 điểm trong phiên chiều sau thông tin Fed có thể điều chỉnh lãi suất.",
-        content: "Thị trường chứng khoán Việt Nam kết thúc phiên 25/9 trong sắc đỏ với VN-Index mất 8,5 điểm. Nguyên nhân chính được cho là do lo ngại Fed sẽ điều chỉnh lãi suất trong cuộc họp tới. Nhiều cổ phiếu ngân hàng và bất động sản giảm mạnh.",
-        author: "Minh Sơn",
-        publishDate: "2025-09-25 15:30",
-        category: "Kinh doanh",
-        tags: ["Chứng khoán", "VN-Index", "Tài chính"],
-        imageUrl: "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=400&fit=crop",
-        viewCount: "9,840",
-        crawlTimestamp: "2025-09-25 15:45:00",
       ),
     ];
 
@@ -175,8 +151,17 @@ class ArticleProvider with ChangeNotifier {
     try {
       if (refresh) {
         _currentPage = 1;
+        _batchCurrentPage = 1;
         _hasMore = true;
+        _batchCache = [];
+        _isBatchMode = false;
       }
+
+      // Kiểm tra nếu đang ở trang chủ (không có filter)
+      final bool isHomepage = _selectedCategory == 'Tất cả' &&
+          _selectedSource == 'Tất cả' &&
+          _searchQuery.isEmpty &&
+          _dateFilter == 'all';
 
       final response = await ApiService.fetchArticles(
         category: _selectedCategory != 'Tất cả' ? _selectedCategory : null,
@@ -184,18 +169,31 @@ class ArticleProvider with ChangeNotifier {
         search: _searchQuery.isNotEmpty ? _searchQuery : null,
         date: _dateFilter != 'all' ? _dateFilter : null,
         page: _currentPage,
-        limit: 20,
+        limit: 10,
       );
 
-      if (refresh) {
-        _articles = response.articles;
+      // 🎲 Nếu là batch mode (trang chủ, page 1, server trả về nhiều bài)
+      if (isHomepage && refresh && response.articles.length > 10) {
+        _isBatchMode = true;
+        _batchCache = response.articles; // Cache tất cả bài
+        _batchCurrentPage = 1;
+
+        // Hiển thị 10 bài đầu tiên
+        _articles = _batchCache.take(_itemsPerPage).toList();
+        _hasMore = _batchCache.length > _itemsPerPage;
       } else {
-        _articles.addAll(response.articles);
+        // Normal mode
+        _isBatchMode = false;
+        if (refresh) {
+          _articles = response.articles;
+        } else {
+          _articles.addAll(response.articles);
+        }
+        _totalPages = response.totalPages;
+        _hasMore = _currentPage < _totalPages;
       }
 
       _filteredArticles = List.from(_articles);
-      _totalPages = response.totalPages;
-      _hasMore = _currentPage < _totalPages;
 
     } catch (e) {
       // If API fails, keep sample data
@@ -208,11 +206,36 @@ class ArticleProvider with ChangeNotifier {
     if (!_hasMore || _loadingState == LoadingState.loading) return;
 
     try {
-      _currentPage++;
-      await _loadArticles();
-      notifyListeners();
+      // 🎲 Batch mode: Lấy từ cache thay vì gọi API
+      if (_isBatchMode && _batchCache.isNotEmpty) {
+        _batchCurrentPage++;
+        final startIndex = (_batchCurrentPage - 1) * _itemsPerPage;
+        final endIndex = startIndex + _itemsPerPage;
+
+        if (startIndex < _batchCache.length) {
+          final newArticles = _batchCache
+              .skip(startIndex)
+              .take(_itemsPerPage)
+              .toList();
+
+          _articles.addAll(newArticles);
+          _filteredArticles = List.from(_articles);
+          _hasMore = endIndex < _batchCache.length;
+
+          notifyListeners();
+        } else {
+          _hasMore = false;
+        }
+      } else {
+        // Normal mode: Gọi API như cũ
+        _currentPage++;
+        await _loadArticles();
+        notifyListeners();
+      }
     } catch (e) {
-      _currentPage--; // Revert page number on error
+      if (!_isBatchMode) {
+        _currentPage--; // Revert page number on error
+      }
       _setError('Không thể tải thêm bài viết: ${e.toString()}');
     }
   }

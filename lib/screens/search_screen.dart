@@ -64,7 +64,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -91,7 +91,7 @@ class _SearchScreenState extends State<SearchScreen> {
               // Back button
               IconButton(
                 onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back, color: Colors.black54),
+                icon: Icon(Icons.arrow_back, color: Theme.of(context).textTheme.bodyMedium?.color),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
@@ -104,25 +104,25 @@ class _SearchScreenState extends State<SearchScreen> {
                   decoration: BoxDecoration(
                     color: Colors.grey[100],
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.grey[300]!),
+                    border: Border.all(color: Theme.of(context).dividerColor!),
                   ),
                   child: TextField(
                     controller: _searchController,
                     focusNode: _searchFocusNode,
                     decoration: InputDecoration(
                       hintText: AppStrings.searchPlaceholder,
-                      hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
-                      prefixIcon: Icon(Icons.search, color: Colors.grey[600], size: 20),
+                      hintStyle: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 14),
+                      prefixIcon: Icon(Icons.search, color: Theme.of(context).textTheme.bodySmall?.color, size: 20),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
                         onPressed: _clearSearch,
-                        icon: Icon(Icons.clear, color: Colors.grey[600], size: 18),
+                        icon: Icon(Icons.clear, color: Theme.of(context).textTheme.bodySmall?.color, size: 18),
                       )
                           : null,
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                     ),
-                    style: const TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 14),
                     onChanged: _onSearchChanged,
                     onSubmitted: _performSearch,
                     textInputAction: TextInputAction.search,
@@ -134,7 +134,7 @@ class _SearchScreenState extends State<SearchScreen> {
               const SizedBox(width: 8),
               IconButton(
                 onPressed: _startVoiceSearch,
-                icon: const Icon(Icons.mic, color: Colors.black54),
+                icon: Icon(Icons.mic, color: Theme.of(context).textTheme.bodyMedium?.color),
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
               ),
@@ -266,10 +266,10 @@ class _SearchScreenState extends State<SearchScreen> {
     return Column(
       children: _recentSearches.map((search) {
         return ListTile(
-          leading: Icon(Icons.history, color: Colors.grey[600], size: 20),
+          leading: Icon(Icons.history, color: Theme.of(context).textTheme.bodySmall?.color, size: 20),
           title: Text(search),
           trailing: IconButton(
-            icon: Icon(Icons.north_west, color: Colors.grey[500], size: 18),
+            icon: Icon(Icons.north_west, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7), size: 18),
             onPressed: () => _fillSearchQuery(search),
           ),
           onTap: () => _performSearch(search),
@@ -293,12 +293,12 @@ class _SearchScreenState extends State<SearchScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey[300]!),
+              border: Border.all(color: Theme.of(context).dividerColor!),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.search, size: 14, color: Colors.grey[600]),
+                Icon(Icons.search, size: 14, color: Theme.of(context).textTheme.bodySmall?.color),
                 const SizedBox(width: 6),
                 Text(
                   keyword,
@@ -333,13 +333,13 @@ class _SearchScreenState extends State<SearchScreen> {
             backgroundColor: AppTheme.primaryRed,
             child: Text(
               '$index',
-              style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
             ),
           ),
           title: Text(topic['title']!),
           trailing: Text(
             '${topic['count']} tìm kiếm',
-            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+            style: TextStyle(fontSize: 12, color: Theme.of(context).textTheme.bodySmall?.color),
           ),
           onTap: () => _performSearch(topic['title']!),
           contentPadding: EdgeInsets.zero,
@@ -359,7 +359,7 @@ class _SearchScreenState extends State<SearchScreen> {
           const SizedBox(height: 16),
           Text(
             'Đang tìm kiếm...',
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color),
           ),
         ],
       ),
@@ -462,7 +462,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                           child: Text(
                             article.sourceShortName,
-                            style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -472,10 +472,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     // Title with search highlighting
                     Text(
                       article.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Theme.of(context).textTheme.bodyLarge?.color,
                         height: 1.2,
                       ),
                       maxLines: 2,
@@ -486,8 +486,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     // Summary
                     Text(
                       article.summary,
-                      style: const TextStyle(
-                        color: Colors.black54,
+                      style: TextStyle(
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
                         fontSize: 12,
                         height: 1.3,
                       ),
@@ -503,12 +503,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.schedule, size: 12, color: Colors.grey[500]),
+                              Icon(Icons.schedule, size: 12, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
                               const SizedBox(width: 2),
                               Flexible(
                                 child: Text(
                                   AppDateUtils.formatRelativeDate(article.publishDate),
-                                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                                  style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -520,12 +520,12 @@ class _SearchScreenState extends State<SearchScreen> {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(Icons.visibility, size: 12, color: Colors.grey[500]),
+                              Icon(Icons.visibility, size: 12, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
                               const SizedBox(width: 2),
                               Flexible(
                                 child: Text(
                                   article.viewCount,
-                                  style: TextStyle(fontSize: 10, color: Colors.grey[500]),
+                                  style: TextStyle(fontSize: 10, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -541,7 +541,7 @@ class _SearchScreenState extends State<SearchScreen> {
               // More options button
               IconButton(
                 onPressed: () => _showArticleOptions(article),
-                icon: Icon(Icons.more_vert, color: Colors.grey[500], size: 18),
+                icon: Icon(Icons.more_vert, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7), size: 18),
                 constraints: const BoxConstraints(),
                 padding: EdgeInsets.zero,
               ),
@@ -557,8 +557,8 @@ class _SearchScreenState extends State<SearchScreen> {
     return Container(
       height: AppConstants.thumbnailImageHeight,
       width: AppConstants.thumbnailImageWidth,
-      color: Colors.grey[300],
-      child: Icon(Icons.image, size: 32, color: Colors.grey[500]),
+      color: Theme.of(context).dividerColor,
+      child: Icon(Icons.image, size: 32, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
     );
   }
 
@@ -570,20 +570,20 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 64, color: Colors.grey[400]),
+            Icon(Icons.search_off, size: 64, color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.5)),
             const SizedBox(height: 16),
             Text(
               AppStrings.noResults,
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
+                color: Theme.of(context).textTheme.bodySmall?.color,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Không tìm thấy kết quả cho "${_searchController.text}"',
-              style: TextStyle(color: Colors.grey[500]),
+              style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color?.withOpacity(0.7)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
@@ -600,9 +600,9 @@ class _SearchScreenState extends State<SearchScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('• Kiểm tra chính tả từ khóa', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                Text('• Thử sử dụng từ khóa khác', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
-                Text('• Sử dụng từ khóa tổng quát hơn', style: TextStyle(color: Colors.grey[600], fontSize: 14)),
+                Text('• Kiểm tra chính tả từ khóa', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 14)),
+                Text('• Thử sử dụng từ khóa khác', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 14)),
+                Text('• Sử dụng từ khóa tổng quát hơn', style: TextStyle(color: Theme.of(context).textTheme.bodySmall?.color, fontSize: 14)),
               ],
             ),
             const SizedBox(height: 24),
@@ -735,7 +735,7 @@ class _SearchScreenState extends State<SearchScreen> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: Theme.of(context).dividerColor,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

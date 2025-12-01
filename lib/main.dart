@@ -1818,9 +1818,25 @@ import 'package:provider/provider.dart';
 
 // Providers
 import 'providers/article_provider.dart';
+import 'providers/auth_provider.dart';
+import 'providers/bookmark_provider.dart';
+import 'providers/reading_history_provider.dart';
+import 'providers/reaction_provider.dart';
+import 'providers/personalization_provider.dart';
+import 'providers/theme_provider.dart';
+import 'providers/settings_provider.dart';
 
 // Screens
 import 'screens/dashboard_screen.dart';
+import 'screens/profile_screen.dart';
+import 'screens/bookmarks_screen.dart';
+import 'screens/reading_history_screen.dart';
+import 'screens/personalized_feed_screen.dart';
+import 'screens/interests_screen.dart';
+import 'screens/settings_screen.dart';
+
+// Services
+import 'services/auth_service.dart';
 
 // Utils
 import 'utils/app_theme.dart';
@@ -1883,21 +1899,59 @@ class NewsEditorialApp extends StatelessWidget {
           lazy: false, // Load immediately for better UX
         ),
 
-        // Add more providers here as needed
-        // ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        // ChangeNotifierProvider(create: (_) => UserProvider()),
+        // Auth Provider for user authentication
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(),
+          lazy: false,
+        ),
+
+        // Bookmark Provider for saved articles
+        ChangeNotifierProvider(
+          create: (_) => BookmarkProvider(),
+          lazy: false,
+        ),
+
+        // Reading History Provider for tracking read articles
+        ChangeNotifierProvider(
+          create: (_) => ReadingHistoryProvider(),
+          lazy: false,
+        ),
+
+        // Reaction Provider for article reactions
+        ChangeNotifierProvider(
+          create: (_) => ReactionProvider(),
+          lazy: false,
+        ),
+
+        // Personalization Provider for personalized content
+        ChangeNotifierProvider(
+          create: (_) => PersonalizationProvider(),
+          lazy: false,
+        ),
+
+        // Theme Provider for dark mode
+        ChangeNotifierProvider(
+          create: (_) => ThemeProvider(),
+          lazy: false,
+        ),
+
+        // Settings Provider for font size and other settings
+        ChangeNotifierProvider(
+          create: (_) => SettingsProvider(),
+          lazy: false,
+        ),
       ],
-      child: Consumer<ArticleProvider>(
-        builder: (context, articleProvider, child) {
+      child: Consumer2<ThemeProvider, SettingsProvider>(
+        builder: (context, themeProvider, settingsProvider, child) {
           return MaterialApp(
             // ========== APP CONFIGURATION ==========
             title: AppStrings.appName,
             debugShowCheckedModeBanner: AppConstants.isDebugMode,
 
             // ========== THEME CONFIGURATION ==========
-            theme: AppTheme.lightTheme,
-            // darkTheme: AppTheme.darkTheme, // Enable when dark mode is ready
-            // themeMode: ThemeMode.system, // Follow system theme
+            theme: ThemeProvider.lightTheme,
+            darkTheme: ThemeProvider.darkTheme,
+            themeMode: themeProvider.themeMode,
 
             // ========== LOCALIZATION ==========
             // Add localization delegates when needed
@@ -1922,9 +1976,9 @@ class NewsEditorialApp extends StatelessWidget {
             // ========== PERFORMANCE ==========
             builder: (context, child) {
               return MediaQuery(
-                // Disable font scaling for consistent UI
+                // Apply custom font scaling from settings
                 data: MediaQuery.of(context).copyWith(
-                  textScaleFactor: 1.0,
+                  textScaleFactor: settingsProvider.fontScale,
                 ),
                 child: child!,
               );
@@ -1963,6 +2017,42 @@ class NewsEditorialApp extends StatelessWidget {
       case '/search':
         return MaterialPageRoute(
           builder: (_) => const SearchScreen(),
+          settings: settings,
+        );
+
+      case '/profile':
+        return MaterialPageRoute(
+          builder: (_) => const ProfileScreen(),
+          settings: settings,
+        );
+
+      case '/bookmarks':
+        return MaterialPageRoute(
+          builder: (_) => const BookmarksScreen(),
+          settings: settings,
+        );
+
+      case '/reading-history':
+        return MaterialPageRoute(
+          builder: (_) => const ReadingHistoryScreen(),
+          settings: settings,
+        );
+
+      case '/personalized-feed':
+        return MaterialPageRoute(
+          builder: (_) => PersonalizedFeedScreen(),
+          settings: settings,
+        );
+
+      case '/interests':
+        return MaterialPageRoute(
+          builder: (_) => const InterestsScreen(),
+          settings: settings,
+        );
+
+      case '/settings':
+        return MaterialPageRoute(
+          builder: (_) => const SettingsScreen(),
           settings: settings,
         );
 
@@ -2026,14 +2116,29 @@ class _AppInitializerState extends State<AppInitializer> {
   /// Initialize app data and services
   Future<void> _initializeApp() async {
     try {
+      // Initialize auth service
+      setState(() {
+        _initializationStatus = 'Đang kiểm tra đăng nhập...';
+      });
+
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      await authProvider.initialize();
+
+      // Initialize bookmarks and reading history if authenticated
+      if (authProvider.isAuthenticated) {
+        final bookmarkProvider = Provider.of<BookmarkProvider>(context, listen: false);
+        await bookmarkProvider.initialize();
+
+        final readingHistoryProvider = Provider.of<ReadingHistoryProvider>(context, listen: false);
+        await readingHistoryProvider.initialize();
+      }
+
+      // Initialize article data
       setState(() {
         _initializationStatus = 'Đang tải dữ liệu...';
       });
 
-      // Get article provider
       final articleProvider = Provider.of<ArticleProvider>(context, listen: false);
-
-      // Initialize data
       await articleProvider.initializeData();
 
       setState(() {
